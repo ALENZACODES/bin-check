@@ -1,0 +1,15 @@
+{
+  "type": "module",
+  "name": "bin-check",
+  "version": "1.0.0",
+  "description": "Which Toronto bin? Type it or take a photo. City of Toronto Waste Wizard data with the 2026 Blue Bin changes applied, and an on-device image model.",
+  "author": "John Khan",
+  "license": "MIT",
+  "private": true,
+  "scripts": {
+    "test": "node --test",
+    "check": "python3 scripts/browser_check.py",
+    "data": "node tools/build-data.mjs",
+    "serve": "python3 -m http.server 8000"
+  }
+}

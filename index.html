@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="en-CA">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'wasm-unsafe-eval'; worker-src 'self' blob:; style-src 'self'; img-src 'self' blob: data:; connect-src 'self' blob: data:; form-action 'none'; base-uri 'none'">
+<meta name="author" content="John Khan">
+<title>Bin Check: which Toronto bin, updated for 2026</title>
+<meta name="description" content="Type it or take a photo. Bin Check tells you which Toronto bin it goes in, using the City's 2,206 item Waste Wizard data with the January 2026 Blue Bin changes applied. The photo model runs on your device.">
+<meta property="og:title" content="Bin Check">
+<meta property="og:description" content="Which Toronto bin? Type it or take a photo. Updated for the 2026 Blue Bin list. Runs on your device.">
+<meta property="og:image" content="https://alenzacodes.github.io/bin-check/docs/social-preview.png">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect x='7' y='9' width='18' height='20' rx='3' fill='%231f5fbf'/%3E%3Crect x='5' y='5' width='22' height='5' rx='2' fill='%23011f5b'/%3E%3Cpath d='M12 18l3 3 6-6' stroke='%23fff' stroke-width='2.6' fill='none'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="src/theme/waves.css">
+<link rel="stylesheet" href="src/style.css">
+</head>
+<body>
+<a class="skip" href="#main">Skip to the search</a>
+<header class="w-wave">
+ <div class="wrap">
+  <h1>Bin Check</h1>
+  <p class="lead">Which bin does it go in? Type it or take a photo. Answers come from the City of Toronto's own sorting data for 2,206 items, with the Blue Bin changes of January 1, 2026 applied on top.</p>
+  <p class="lock" id="lock"><span aria-hidden="true">🔒</span> On device. The photo model runs inside this page, and a security policy stops the page from sending anything to any other server. Your photos never leave your phone.</p>
+ </div>
+</header>
+<main class="wrap" id="main">
+  <section class="finder" aria-label="Find an item">
+    <label for="q" class="sr">What are you throwing out?</label>
+    <div class="searchrow">
+      <input id="q" type="search" autocomplete="off" spellcheck="false" placeholder="What are you throwing out? Try coffee cup, chip bag or batteries">
+      <label class="btn cam" for="photo"><span aria-hidden="true">📷</span> Photo</label>
+      <input id="photo" type="file" accept="image/*" capture="environment" hidden>
+    </div>
+    <ul id="results" class="results" role="listbox" aria-label="Matching items"></ul>
+    <div class="samples">
+      <p class="note">No photo handy? Try one of these. <span id="modelState" class="conf"></span></p>
+      <div id="sampleStrip" class="strip"></div>
+    </div>
+  </section>
+
+  <section id="photoBox" class="photobox" hidden aria-live="polite">
+    <img id="photoImg" alt="Your photo">
+    <div>
+      <h2 id="photoTitle">Looking at your photo</h2>
+      <p id="photoNote" class="note"></p>
+      <ul id="photoGuesses" class="guesses"></ul>
+    </div>
+  </section>
+
+  <section id="card" class="card" hidden aria-live="polite">
+    <div class="cardhead">
+      <h2 id="cName"></h2>
+      <label class="toggle"><input id="guessMode" type="checkbox" checked> Guess first</label>
+    </div>
+    <div id="guessRow" class="guessrow">
+      <p><strong>Where would you have put it?</strong> Guess, then see the answer. Your guesses build the sorting log below.</p>
+      <div id="guessBtns"></div>
+      <button id="skipGuess" class="linkish" type="button">Just tell me</button>
+    </div>
+    <div id="answer" hidden>
+      <div id="verdict" class="verdict"></div>
+      <div id="bin" class="bin"></div>
+      <div id="changed" class="changed" hidden></div>
+      <ol id="steps" class="steps"></ol>
+      <ul id="notes" class="notes"></ul>
+      <p id="sources" class="note sources"></p>
+    </div>
+  </section>
+
+  <section class="log" aria-labelledby="logH">
+    <h2 id="logH">Your sorting log</h2>
+    <p class="note">Kept on this device only. It measures what Bin Check changed: items that would have gone in the wrong bin, and roughly how much stayed out of landfill.</p>
+    <div class="stats">
+      <div class="stat"><span id="sItems">0</span><small>items checked</small></div>
+      <div class="stat"><span id="sRight">none yet</span><small>right on the first guess</small></div>
+      <div class="stat bad"><span id="sCont">0</span><small>Blue or Green Bin mistakes caught</small></div>
+      <div class="stat good"><span id="sLand">0 g</span><small>kept out of landfill (estimate)</small></div>
+    </div>
+    <p id="logLine" class="note"></p>
+    <ul id="logList" class="loglist"></ul>
+    <div class="actions">
+      <button id="csv" class="btn alt" type="button">Download the log (CSV)</button>
+      <button id="demoLog" class="btn alt" type="button">Fill with a sample week</button>
+      <button id="clearLog" class="btn alt" type="button">Clear</button>
+    </div>
+  </section>
+
+  <section class="changes" aria-labelledby="chH">
+    <h2 id="chH">What changed in 2026</h2>
+    <p class="note">On January 1, 2026, Ontario's Blue Box moved to producer responsibility and Circular Materials took over Toronto's residential Blue Bin. The City's open data file is from November 2023, so these items would be sorted wrong by anything that reads it directly. Bin Check fixes them.</p>
+    <ul id="changeList" class="changelist"></ul>
+  </section>
+
+  <details class="about">
+    <summary>How it works, sources and limits</summary>
+    <ul>
+      <li><strong>Data:</strong> the City of Toronto Waste Wizard lookup table (2,206 items, file dated November 27, 2023) from Toronto Open Data, plus the 2026 Blue Bin list from Circular Materials, the Ontario Deposit Return Program and the AGCO, each linked on the answer it changes.</li>
+      <li><strong>Search:</strong> typo tolerant, plural aware, with everyday synonyms (styrofoam, pop, tinfoil, K-Cup).</li>
+      <li><strong>Photos:</strong> MobileCLIP S0, a small image model from Apple, runs in your browser with ONNX Runtime. It compares your photo with 153 short descriptions of 81 common items. It shows its top three guesses and how sure it is, and you pick the right one. Nothing is uploaded.</li>
+      <li><strong>Limits:</strong> this is a guide, not the City's ruling. The photo model knows 81 kinds of item, not all 2,206, so search covers the rest. Weights in the log are rough typical weights. Rules for apartments and businesses can differ.</li>
+    </ul>
+  </details>
+</main>
+<footer class="wrap">Made by John Khan in Toronto, Ontario. Source code under the MIT licence. Sorting data from the City of Toronto and Circular Materials.</footer>
+<script type="module" src="src/app.js"></script>
+</body>
+</html>

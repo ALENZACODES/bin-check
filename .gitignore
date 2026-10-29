@@ -1,0 +1,7 @@
+tools/node_modules/
+models/Xenova/mobileclip_s0/onnx/text_model.onnx
+models/Xenova/mobileclip_s0/tokenizer.json
+models/Xenova/mobileclip_s0/tokenizer_config.json
+docs/_video/
+.env
+docs/demo.webm
