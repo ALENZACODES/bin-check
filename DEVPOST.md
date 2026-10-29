@@ -1,6 +1,6 @@
 # Devpost submission: Bin Check (Arbiter Hacks V1, Theme Track: Rethinking Waste)
 
-Paste each block into the matching field. Fill [LIVE_URL], [REPO_URL] and [YOUTUBE_URL].
+Paste each block into the matching field. Fill [YOUTUBE_URL] once the video is up. The live and repo links are filled in.
 
 **Track**: Theme Track, Rethinking Waste (choose it when registering; one track only)
 
@@ -14,8 +14,8 @@ Which Toronto bin? Type it or snap a photo. City data for 2,206 items, corrected
 javascript, html5, css3, transformers.js, onnx-runtime-web, mobileclip, webassembly, node.js, playwright, github-pages, toronto-open-data
 
 **Try it out links**
-* [LIVE_URL]
-* [REPO_URL]
+* https://alenzacodes.github.io/bin-check/
+* https://github.com/ALENZACODES/bin-check
 
 **Video demo link**
 [YOUTUBE_URL]
@@ -88,8 +88,8 @@ The problem is Blue Bin contamination in Toronto, 35% of what residents put in, 
 **Open source libraries**: Transformers.js (Apache 2.0), ONNX Runtime Web (MIT), MobileCLIP S0 weights (Apple licence). Playwright only for the browser check and demo recording.
 
 ## Before submitting (checklist for John)
-1. Make the repo public and turn on GitHub Pages from the main branch root.
+1. Done October 29: the repo is public and GitHub Pages is on.
 2. Open the live link, tap a sample photo and check it answers in a second or two.
 3. Upload docs/demo-captioned.mp4 to YouTube as Public or Unlisted (2:14; the limit is 2 to 3 minutes), or record a voice-over with VIDEO_SCRIPT.md.
-4. Replace [LIVE_URL], [REPO_URL] and [YOUTUBE_URL] above.
+4. Replace [YOUTUBE_URL] above.
 5. Upload the eight gallery images in order.
