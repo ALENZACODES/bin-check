@@ -40,6 +40,45 @@ All the logic is in plain JavaScript modules that run the same in the browser an
 4. **Photos.** `tools/embed-labels.mjs` precomputes MobileCLIP S0 text embeddings for 153 prompts covering 81 common items, stored as int8. In the browser, `src/vision.js` loads the fp16 image model (23 MB) and ONNX Runtime Web (14 MB) from this site's own files, embeds the photo, and `src/matcher.js` ranks labels by cosine similarity with a softmax. The top three are shown with a confidence word, and you confirm.
 5. **Measurement.** `outcome()` classifies each guess as right, contamination caught (a wrong Blue or Green Bin guess), landfill avoided (garbage guessed, but it can be diverted) or hazard caught. `summarize()` turns the log into rates and grams, using a rough typical weight for each photo label.
 
+## Project structure
+
+```text
+bin-check/
+├── .github/
+│   └── workflows/                    # CI workflows (1 file)
+├── data/                             # City of Toronto Waste Wizard open data
+│   └── waste-wizard-2023-11-27.json
+├── docs/                             # Demo video, gallery images and sample photos (23 files)
+├── models/                           # On-device image model files
+│   └── Xenova/                       # 4 files
+├── scripts/
+│   ├── browser_check.py              # Browser check
+│   ├── record_demo.py                # Records the captioned demo
+│   └── social_preview.py             # Renders the social preview image
+├── src/
+│   ├── data/                         # Generated item data (2 files)
+│   ├── theme/                        # Shared page theme (3 files)
+│   ├── vendor/                       # Vendored libraries (6 files)
+│   ├── app.js                        # Interface logic
+│   ├── engine.js                     # Search, 2026 rules overlay and photo matching
+│   ├── labels.js                     # Items the photo matcher can recognise
+│   ├── matcher.js                    # Maps an image embedding to likely labels
+│   ├── rules2026.js                  # Ontario Blue Box changes from January 1, 2026
+│   ├── style.css                     # Styles
+│   └── vision.js                     # Loads MobileCLIP S0 and embeds a photo in the browser
+├── tests/                            # Automated tests
+│   ├── fixtures/                     # 1 file
+│   └── engine.test.js
+├── tools/                            # Data and embedding build scripts (5 files)
+├── .gitignore
+├── DEVPOST.md                        # Submission write-up
+├── index.html                        # Page markup
+├── LICENSE                           # Licence
+├── package.json                      # npm scripts and dependencies
+├── README.md                         # This file
+└── VIDEO_SCRIPT.md                   # Demo video script
+```
+
 ## Data sources
 * City of Toronto, Waste Wizard Lookup Table, Toronto Open Data, file dated November 27, 2023: https://open.toronto.ca/dataset/waste-wizard-lookup-table/ (a copy is in `data/`)
 * Circular Materials, Toronto, what you can recycle, opened October 29, 2026: https://www.circularmaterials.ca/resident-communities/toronto/
